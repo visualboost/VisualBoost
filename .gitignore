@@ -1,0 +1,8 @@
+#Ignore IDE dir
+.idea
+
+#Ignore database
+data
+
+#Ignore logs
+auth/logs
