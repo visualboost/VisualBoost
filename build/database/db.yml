@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  mongodb_build:
+    hostname: ${BUILD_MONGO_CONTAINER_NAME}
+    container_name: ${BUILD_MONGO_CONTAINER_NAME}
+    image: 'mongo:6.0'
+    command: ["--port", "${MONGO_PORT_BUILD}", "--bind_ip_all", "--auth"]
+    restart: 'on-failure'
+    expose:
+      - ${MONGO_PORT_BUILD}
+    ports:
+      - ${MONGO_PORT_BUILD}:${MONGO_PORT_BUILD}
+    networks:
+      - visual_boost_build_network
+    volumes:
+      - ./home/mongodb:/home/mongodb #Necessary for mongosh
+      - ${MONGO_DATA_DIR_BUILD}:/data/db #data directory
+      - ./init/init_user.sh:/docker-entrypoint-initdb.d/init_mongo.sh:ro #Init user script
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u $${MONGO_ADMIN} -p $${MONGO_ADMIN_PW} --quiet | grep 1
+      interval: 30s
+      start_period: 60s
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PW}
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_USER_PW=${MONGO_USER_PW}
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
+
+networks:
+  visual_boost_build_network:
+    name: ${NETWORK_BUILD}

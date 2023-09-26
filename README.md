@@ -22,12 +22,12 @@ NETWORK_AUTH=visual_boost_auth_network
 NETWORK_MAIN=visual_boost_main_network
 NETWORK_BUILD=visual_boost_build_network
 
-  # Database #######################################################################################
+# Database #######################################################################################
 
 COMPOSE_PROJECT_NAME=visualboost_auth
 
-  ### Mongo-DB - User & DB ########################################################################
-  # User-Name of Mongo-DB with admin rights
+### Mongo-DB - User & DB ########################################################################
+# User-Name of Mongo-DB with admin rights
 MONGO_ADMIN=Admin
 
   # Password of Mongo-DB Admin
@@ -88,4 +88,11 @@ MAIL_PW=<smtp-password>
 
 GIT_OPTIONS_BASE_PROJECT_REPOSITORY=github.com/JensWinkler91/VisualBoost_Node_Base.git
 GIT_OPTIONS_BASE_PROJECT_BRANCH=main
+
+  ################################################################################################
+  # BUILD
+  ################################################################################################
+
+VERSION_FILE_NAME=version.json
+OPTIONS_FILE_NAME=options.json
 ````
