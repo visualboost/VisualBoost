@@ -2,6 +2,7 @@ version: '3.9'
 
 include:
     - ./auth/database/db.yml
+    - ./main/database/db.yml
 
 services:
     auth:
@@ -9,3 +10,13 @@ services:
             file: ./auth/auth.yml
             service: auth_app
         env_file: .env
+        depends_on:
+            - mongodb_auth
+    main:
+        extends:
+            file: ./main/main.yml
+            service: main_app
+        env_file: .env
+        depends_on:
+            - mongodb_main
+            - auth

@@ -1,0 +1,36 @@
+version: '3.9'
+
+include:
+    - ./database/db.yml
+
+services:
+    main_app:
+        container_name: ${MAIN_APP_CONTAINER_NAME}
+        image: 'visualboost/main:latest'
+        pull_policy: always
+        restart: 'unless-stopped'
+        command: [ "npm", "run", "start" ]
+        expose:
+            - ${HTTP_PORT_MAIN}
+        ports:
+            - ${HTTP_PORT_MAIN}:${HTTP_PORT_MAIN}
+        volumes:
+            - ./logs:/logs #Directory for log files
+        environment:
+            - MONGO_URL=${MAIN_MONGO_CONTAINER_NAME}
+            - MONGO_PORT=${MONGO_PORT_MAIN}
+            - MONGO_ADMIN=${MONGO_ADMIN}
+            - MONGO_ADMIN_PW=${MONGO_ADMIN_PW}
+            - HTTP_PORT=${HTTP_PORT_MAIN}
+            - GIT_OPTIONS_BASE_PROJECT_REPOSITORY=${GIT_OPTIONS_BASE_PROJECT_REPOSITORY}
+            - GIT_OPTIONS_BASE_PROJECT_BRANCH=${GIT_OPTIONS_BASE_PROJECT_BRANCH}
+            - BUILD_BACKEND_PORT=${HTTP_PORT_BUILD}
+            - DOMAIN=${DOMAIN}
+            - HTTP_PORT_FRONTEND=${HTTP_PORT_FRONTEND}
+            - JWT_SECRET=${JWT_SECRET}
+            - INTERNAL_KEY=${INTERNAL_KEY}
+            - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+        networks:
+            - visual_boost_main_network
+        depends_on:
+            - mongodb_main

@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  mongodb_main:
+    hostname: ${MAIN_MONGO_CONTAINER_NAME}
+    container_name: ${MAIN_MONGO_CONTAINER_NAME}
+    image: 'visualboost/mongo:6.0'
+    command: [ "--port", "${MONGO_PORT_MAIN}", "--bind_ip_all", "--auth", "--keyFile", "repl_auth.key", "--replSet", "repl_main" ]
+    restart: 'on-failure'
+    expose:
+      - ${MONGO_PORT_MAIN}
+    ports:
+      - ${MONGO_PORT_MAIN}:${MONGO_PORT_MAIN}
+    networks:
+      - visual_boost_main_network
+    volumes:
+      - ./home/mongodb:/home/mongodb #Necessary for mongosh
+      - ${MONGO_DATA_DIR_MAIN}:/data/db #data directory
+      - ./init/init_replicaset.sh:/docker-entrypoint-initdb.d/init_replicaset.sh:ro #init replicaset script
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u $${MONGO_ADMIN} -p $${MONGO_ADMIN_PW} --quiet | grep 1
+      interval: 30s
+      start_period: 60s
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PW}
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+      - MONGO_PORT=${MONGO_PORT_MAIN} # Necessary to initialize replicaset
+      - MONGO_URL=${MAIN_MONGO_CONTAINER_NAME} # Necessary to initialize replicaset
+
+networks:
+  visual_boost_main_network:
+    name: ${NETWORK_MAIN}

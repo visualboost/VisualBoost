@@ -7,6 +7,7 @@ services:
     auth_app:
         container_name: ${AUTH_APP_CONTAINER_NAME}
         image: 'visualboost/auth:latest'
+        pull_policy: always
         restart: 'unless-stopped'
         command: [ "npm", "run", "start" ]
         expose:

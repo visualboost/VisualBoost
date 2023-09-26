@@ -6,3 +6,4 @@ data
 
 #Ignore logs
 auth/logs
+main/logs

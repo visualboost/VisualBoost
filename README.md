@@ -46,10 +46,10 @@ MONGO_USER_PW=PW_USER
 MONGO_URL_AUTH=mongoauth
 MONGO_PORT_AUTH=40001
 
-MONGO_URL_MAIN=mongoauth
+MONGO_URL_MAIN=mongomain
 MONGO_PORT_MAIN=40011
 
-MONGO_URL_BUILD=mongoauth
+MONGO_URL_BUILD=mongobuild
 MONGO_PORT_BUILD=40021
 
   # The volume where the db is located (outside of the Docker-Container).
@@ -59,15 +59,17 @@ MONGO_DATA_DIR_MAIN=./../../data/main
 
   # Connectivity ######################################################################
 HTTP_PORT_AUTH=40000
-HTTP_PORT_BUILD=40010
-HTTP_PORT_MAIN=40020
+HTTP_PORT_MAIN=40010
+HTTP_PORT_BUILD=40020
 HTTP_PORT_FRONTEND=44444
 
 DOMAIN=localhost
 
   # Secrets ##########################################################################
-JWT_SECRET=JWT_SECRET
+JWT_SECRET=TOP_SECRET
 
+INTERNAL_KEY=<PRIVATE_KEY_FOR_INTERNAL_ROUTES>
+ENCRYPTION_KEY=<this_is_an_32_byte_encr_key!!!>
 
   ################################################################################################
   # BUILD
@@ -80,9 +82,10 @@ MAIL_PORT=<smtp.port>
 MAIL_USER=<your-mail>
 MAIL_PW=<smtp-password>
 
-################################################################################################
-# MAIN
-################################################################################################
+  ################################################################################################
+  # MAIN
+  ################################################################################################
 
-
+GIT_OPTIONS_BASE_PROJECT_REPOSITORY=github.com/JensWinkler91/VisualBoost_Node_Base.git
+GIT_OPTIONS_BASE_PROJECT_BRANCH=main
 ````
