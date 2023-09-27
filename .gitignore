@@ -5,5 +5,5 @@
 data
 
 #Ignore logs
-auth/logs
-main/logs
+docker/auth/logs
+docker/main/logs

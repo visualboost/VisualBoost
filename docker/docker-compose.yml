@@ -30,3 +30,11 @@ services:
         depends_on:
             - mongodb_build
             - main
+
+    frontend:
+        extends:
+            file: ./frontend/frontend.yml
+            service: frontend_app
+        env_file: .env
+        depends_on:
+            - build

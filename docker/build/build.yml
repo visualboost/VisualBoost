@@ -8,7 +8,6 @@ services:
         container_name: ${BUILD_APP_CONTAINER_NAME}
         image: 'visualboost/build:latest'
         restart: 'unless-stopped'
-        pull_policy: always
         command: [ "npm", "run", "start" ]
         expose:
             - ${HTTP_PORT_BUILD}
@@ -22,7 +21,7 @@ services:
             - MONGO_DB_NAME=${MONGO_DB_NAME}
             - HTTP_PORT=${HTTP_PORT_BUILD}
             - DOMAIN=${DOMAIN}
-            - HTTP_PORT_FRONTEND=${HTTP_PORT_FRONTEND}
+            - HTTP_PORT_FRONTEND=${HTTP_PORT_REACT}
             - VERSION_FILE_NAME=${VERSION_FILE_NAME}
             - OPTIONS_FILE_NAME=${OPTIONS_FILE_NAME}
         networks:

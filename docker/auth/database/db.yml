@@ -29,7 +29,7 @@ services:
       - MONGO_USER_PW=${MONGO_USER_PW}
       - MONGO_DB_NAME=${MONGO_DB_NAME}
       - MONGO_PORT=${MONGO_PORT_AUTH} # Necessary to initialize replicaset
-      - MONGO_URL=${MONGO_URL_AUTH} # Necessary to initialize replicaset
+      - MONGO_URL=${AUTH_MONGO_CONTAINER_NAME} # Necessary to initialize replicaset
 
 networks:
   visual_boost_auth_network:

@@ -7,7 +7,6 @@ services:
     main_app:
         container_name: ${MAIN_APP_CONTAINER_NAME}
         image: 'visualboost/main:latest'
-        pull_policy: always
         restart: 'unless-stopped'
         command: [ "npm", "run", "start" ]
         expose:
@@ -26,7 +25,7 @@ services:
             - GIT_OPTIONS_BASE_PROJECT_BRANCH=${GIT_OPTIONS_BASE_PROJECT_BRANCH}
             - BUILD_BACKEND_PORT=${HTTP_PORT_BUILD}
             - DOMAIN=${DOMAIN}
-            - HTTP_PORT_FRONTEND=${HTTP_PORT_FRONTEND}
+            - HTTP_PORT_FRONTEND=${HTTP_PORT_REACT}
             - JWT_SECRET=${JWT_SECRET}
             - INTERNAL_KEY=${INTERNAL_KEY}
             - ENCRYPTION_KEY=${ENCRYPTION_KEY}

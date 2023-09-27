@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+    frontend_app:
+        container_name: ${REACT_APP_CONTAINER_NAME}
+        image: 'visualboost/frontend:latest'
+        restart: 'unless-stopped'
+        command: /bin/bash -c "/set_env.sh && serve -n -s build -l ${HTTP_PORT_REACT}"
+        tty: true
+        expose:
+            - ${HTTP_PORT_REACT}
+        ports:
+            - ${HTTP_PORT_REACT}:${HTTP_PORT_REACT}
+        environment:
+            - HTTP_PORT=${HTTP_PORT_REACT}
+            - DOMAIN=${DOMAIN}
+            - HTTP_PORT_MAIN=${HTTP_PORT_MAIN}
+            - HTTP_PORT_BUILD=${HTTP_PORT_BUILD}
+            - HTTP_PORT_AUTH=${HTTP_PORT_AUTH}
