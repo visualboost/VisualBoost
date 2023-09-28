@@ -11,6 +11,8 @@ services:
             file: ./../container/auth/auth.yml
             service: auth_app
         env_file: .env
+        volumes:
+            - ${LOG_DIR_AUTH}:/logs #Directory for log files
         depends_on:
             - mongodb_auth
     main:
@@ -37,6 +39,7 @@ services:
             service: react_app
         volumes:
             - ./nginx/templates:/etc/nginx/templates/
+            - ${LOG_DIR_NGINX}:/logs/nginx/ #Directory for log files
         env_file: .env
         depends_on:
             - build

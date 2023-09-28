@@ -13,6 +13,10 @@ server {
     location / {
     }
 
+    #Logs
+    access_log  /logs/nginx/access.log;
+    error_log   /logs/nginx/error.log;
+
     #CORS
     add_header 'Access-Control-Allow-Origin' "${DOMAIN}" always;
     add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE' always;

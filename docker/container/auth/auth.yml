@@ -13,8 +13,6 @@ services:
             - ${HTTP_PORT_AUTH}
         ports:
             - ${HTTP_PORT_AUTH}:${HTTP_PORT_AUTH}
-        volumes:
-            - ./logs:/logs #Directory for log files
         networks:
             - visual_boost_auth_network
         environment:

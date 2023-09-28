@@ -115,11 +115,13 @@ docker-compose pull && docker-compose up -d
 | `MONGO_PORT_BUILD`                         | `40021`                                   | Port for the build database                            |
 
 ### Volumes/Directories
-| Parameter                                  | Default Value                             | Description                                           |
-|--------------------------------------------|-------------------------------------------|--------------------------------------------------------|
-| `MONGO_DATA_DIR_AUTH`                      | `./../../data/auth`                       | Directory for the authentication service               |
-| `MONGO_DATA_DIR_BUILD`                     | `./../../data/build`                      | Directory for the build service                       |
-| `MONGO_DATA_DIR_MAIN`                      | `./../../data/main`                       | Directory for the main service                        |
+| Parameter                                  | Default Value                             | Description                                     |
+|--------------------------------------------|-------------------------------------------|-------------------------------------------------|
+| `MONGO_DATA_DIR_AUTH`                      | `./../../data/auth`                       | Directory for the authentication database       |
+| `MONGO_DATA_DIR_BUILD`                     | `./../../data/build`                      | Directory for the build database                |
+| `MONGO_DATA_DIR_MAIN`                      | `./../../data/main`                       | Directory for the main database                 |
+| `LOG_DIR_AUTH`                      | `./../../logs/auth`                       | Directory for the log files of the auth service |
+| `LOG_DIR_NGINX`                      | `./../logs/nginx`                       | Directory for the log files of the nginx server |
 
 ## Connectivity Configuration
 
