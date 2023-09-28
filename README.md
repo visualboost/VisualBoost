@@ -21,10 +21,44 @@ Welcome to VisualBoost - A Software development tool.<br>
 
 Using VisualBoost not only offers developers remarkable time savings but also ensures they have a visual overview of their backend at all times. Instead of having to write complex code from scratch, developers can efficiently design backends. The automatic generation of a functional Node.js and MongoDB backend ensures a seamless transformation of your backend description into a fully operational application. VisualBoost empowers developers to reduce time and effort, allowing them to focus more on implementing their creative ideas.
 
-## Configuration:
+# How to run
+
+---
+
+### Prerequisites
+
+- Docker: ``v20.10.21 or higher``
+- Docker-Compose: ``v2.21.0 or higher``
 
 
-# Docker Configuration
+### Step 1 - Access the repository
+Pull or download the ``https://github.com/JensWinkler91/VisualBoost.git``
+
+#### To download the repository (Linux):
+````shell
+curl -L -H  "Accept: application/vnd.github+json" https://api.github.com/repos/JensWinkler91/VisualBoost/zipball/main -o visualboost.zip && unzip visualboost.zip -d VisualBoost
+````
+
+### Step 2 - Navigate
+Navigate into the directory `docker/local` if you want to run VisualBoost on your local machine. 
+
+Navigate into the directory `docker/remote` if you want to run VisualBoost on a server. The docker-compose.yml inside `docker/remote` contains
+a certbot container to generate a letsencrypt certificate for you before the application will be started.
+
+### Step 3 - Configuration
+Add or adapt the configuration variables in `.env` that are marked with `Please adapt`. 
+For further information please check the `Configuration`section below.
+
+### Step 4 - Start the application
+````shell
+docker-compose up
+````
+
+# Configuration
+
+---
+
+## Docker Configuration
 
 | Parameter                                  | Default Value                             | Description                                           |
 |--------------------------------------------|-------------------------------------------|--------------------------------------------------------|
@@ -48,7 +82,7 @@ Using VisualBoost not only offers developers remarkable time savings but also en
 | `NETWORK_MAIN`                             | `visual_boost_main_network`                | Name of the main network                               |
 | `NETWORK_BUILD`                            | `visual_boost_build_network`               | Name of the build network                              |
 
-# Database Configuration
+## Database Configuration
 
 ### MongoDB - User & Database
 | Parameter                                  | Default Value                             | Description                                           |
@@ -73,7 +107,7 @@ Using VisualBoost not only offers developers remarkable time savings but also en
 | `MONGO_DATA_DIR_BUILD`                     | `./../../data/build`                      | Directory for the build service                       |
 | `MONGO_DATA_DIR_MAIN`                      | `./../../data/main`                       | Directory for the main service                        |
 
-# Connectivity Configuration
+## Connectivity Configuration
 
 | Parameter                                  | Default Value                             | Description                                           |
 |--------------------------------------------|-------------------------------------------|--------------------------------------------------------|
@@ -87,14 +121,14 @@ Using VisualBoost not only offers developers remarkable time savings but also en
 | `HTTP_PORT_BUILD`                          | `40020`                                   | HTTP port for the build service                        |
 | `HTTP_PORT_REACT`                          | `44444`                                   | HTTP port for the React service                        |
 
-# Secrets Configuration
+## Secrets Configuration
 | Parameter                                  | Default Value                             | Description                                           |
 |--------------------------------------------|-------------------------------------------|--------------------------------------------------------|
 | `JWT_SECRET`                               | -                          | Secret used for creating and verifying JWTs            |
 | `INTERNAL_KEY`                             | -                          | Key to access the private API                          |
 | `ENCRYPTION_KEY`                           | -                          | 32-bit key used for data encryption/decryption         |
 
-# E-Mail Credentials
+## E-Mail Credentials
 | Parameter                                  | Default Value                             | Description                                           |
 |--------------------------------------------|-------------------------------------------|--------------------------------------------------------|
 | `MAIL_HOST`                                | -                          | Host for email login credentials                       |
@@ -102,111 +136,8 @@ Using VisualBoost not only offers developers remarkable time savings but also en
 | `MAIL_USER`                                | -                          | Username for email login credentials                    |
 | `MAIL_PW`                                  | -                          | Password for email login credentials                    |
 
-
-
-
-
-
-
-````yaml
-# Docker #######################################################################################
-
-# Project name
-COMPOSE_PROJECT_NAME=visualboost
-
-  # Container names
-AUTH_MONGO_CONTAINER_NAME=mongoauth
-AUTH_APP_CONTAINER_NAME=visualboost_auth
-
-MAIN_MONGO_CONTAINER_NAME=mongomain
-MAIN_APP_CONTAINER_NAME=visualboost_main
-
-BUILD_MONGO_CONTAINER_NAME=mongobuild
-BUILD_APP_CONTAINER_NAME=visualboost_build
-
-REACT_APP_CONTAINER_NAME=visualboost_react
-
-# Network
-NETWORK_AUTH=visual_boost_auth_network
-NETWORK_MAIN=visual_boost_main_network
-NETWORK_BUILD=visual_boost_build_network
-
-
-
-# Database #######################################################################################
-
-### Mongo-DB - User & DB ########################################################################
-MONGO_ADMIN=Admin #DB-Admin
-MONGO_ADMIN_PW=<PW_ADMIN> #DB-Admin password
-MONGO_USER=User #DB-User that has read / write access to the db
-MONGO_USER_PW=<PW_USER> #DB-User password
-
-MONGO_DB_NAME=db #Name of the database
-
-# Ports
-MONGO_PORT_AUTH=40001 #Authentication db
-MONGO_PORT_MAIN=40011 #DB of the main service
-MONGO_PORT_BUILD=40021 #DB of the build service
-
-# Volumes/Directories
-MONGO_DATA_DIR_AUTH=./../../data/auth #Volume of the auth service
-MONGO_DATA_DIR_BUILD=./../../data/build #Volume of the build service
-MONGO_DATA_DIR_MAIN=./../../data/main #Volume of the main service
-
-
-
-# Connectivity ######################################################################
-
-# Domain of the applications, .e.g. http://localhost
-DOMAIN=<Domain>
-
-  # Application Ports
-HTTP_PORT_AUTH=40000
-HTTP_PORT_MAIN=40010
-HTTP_PORT_BUILD=40020
-HTTP_PORT_REACT=44444
-
-# Secrets ##########################################################################
-# This secret is used to create and verify the jwts
-JWT_SECRET=<TOP_SECRET>
-
-# An secret to access the private api
-INTERNAL_KEY=<PRIVATE_KEY_FOR_INTERNAL_ROUTES>
-
-# A 32-Bit key that is used to encrypt & decrypt data
-ENCRYPTION_KEY=<this_is_an_32_byte_encr_key!!!>
-
-
-
-################################################################################################
-# BUILD
-################################################################################################
-
-  # E-Mail credentials - Necessary to sign in
-MAIL_HOST=<smtp.your.host.de>
-MAIL_PORT=<smtp.port>
-
-MAIL_USER=<your-mail>
-MAIL_PW=<smtp-password>
-
-
-
-################################################################################################
-# MAIN
-################################################################################################
-
-  #The default base project repository that is used by the main service
-GIT_OPTIONS_BASE_PROJECT_REPOSITORY=github.com/JensWinkler91/VisualBoost_Node_Base.git
-GIT_OPTIONS_BASE_PROJECT_BRANCH=main
-
-
-
-################################################################################################
-# BUILD
-################################################################################################
-
-  # File names that are used by the build service
-VERSION_FILE_NAME=version.json
-OPTIONS_FILE_NAME=options.json
-
-````
+## Project Settings
+| Parameter                                  | Default Value                                       | Description                                           |
+|--------------------------------------------|-----------------------------------------------------|--------------------------------------------------------|
+| `GIT_OPTIONS_BASE_PROJECT_REPOSITORY`                                | `github.com/JensWinkler91/VisualBoost_Node_Base.git` | Host for email login credentials                       |
+| `GIT_OPTIONS_BASE_PROJECT_BRANCH`                                | `main`                                              | Port for email login credentials                       |
