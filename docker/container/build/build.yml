@@ -22,8 +22,6 @@ services:
             - HTTP_PORT=${HTTP_PORT_BUILD}
             - DOMAIN=${DOMAIN}
             - HTTP_PORT_FRONTEND=${HTTP_PORT_REACT}
-            - VERSION_FILE_NAME=${VERSION_FILE_NAME}
-            - OPTIONS_FILE_NAME=${OPTIONS_FILE_NAME}
         networks:
             - visual_boost_build_network
         depends_on:

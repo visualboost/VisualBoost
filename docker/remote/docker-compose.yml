@@ -1,21 +1,21 @@
 version: '3.9'
 
 include:
-    - ./auth/database/db.yml
-    - ./main/database/db.yml
-    - ./build/database/db.yml
+    - ./../container/auth/database/db.yml
+    - ./../container/main/database/db.yml
+    - ./../container/build/database/db.yml
 
 services:
     auth:
         extends:
-            file: ./auth/auth.yml
+            file: ./../container/auth/auth.yml
             service: auth_app
         env_file: .env
         depends_on:
             - mongodb_auth
     main:
         extends:
-            file: ./main/main.yml
+            file: ./../container/main/main.yml
             service: main_app
         env_file: .env
         depends_on:
@@ -24,17 +24,20 @@ services:
 
     build:
         extends:
-            file: ./build/build.yml
+            file: ./../container/build/build.yml
             service: build_app
         env_file: .env
         depends_on:
             - mongodb_build
             - main
 
-    frontend:
+    react:
         extends:
-            file: ./frontend/frontend.yml
-            service: frontend_app
+            file: ./../container/react/react.yml
+            service: react_app
+        volumes:
+            - ./nginx/templates:/etc/nginx/templates/
         env_file: .env
         depends_on:
             - build
+
