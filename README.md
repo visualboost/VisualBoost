@@ -50,8 +50,22 @@ Add or adapt the configuration variables in `.env` that are marked with `Please 
 For further information please check the `Configuration`section below.
 
 ### Step 4 - Start the application
+
+To run in foreground:
+
 ````shell
 docker-compose up
+````
+
+To run in background:
+
+````shell
+docker-compose up -d
+````
+
+# How to update
+````shell
+docker-compose pull && docker-compose up -d
 ````
 
 # Configuration
