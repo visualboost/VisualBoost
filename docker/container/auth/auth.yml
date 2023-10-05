@@ -10,20 +10,23 @@ services:
         restart: 'unless-stopped'
         command: [ "npm", "run", "start" ]
         expose:
-            - ${HTTP_PORT_AUTH}
+            - ${HTTP_PORT_AUTH} #Run application on this port
         ports:
-            - ${HTTP_PORT_AUTH}:${HTTP_PORT_AUTH}
+            - ${HTTP_PORT_AUTH}:${HTTP_PORT_AUTH} #Run application on this port
         networks:
             - visual_boost_auth_network
         environment:
-            - HTTP_PORT=${HTTP_PORT_AUTH}
-            - MONGO_PORT=${MONGO_PORT_AUTH}
-            - MONGO_URL=${AUTH_MONGO_CONTAINER_NAME}
-            - MONGO_USER=${MONGO_USER}
-            - MONGO_USER_PW=${MONGO_USER_PW}
-            - MONGO_DB_NAME=${MONGO_DB_NAME}
+            - HTTP_PORT=${HTTP_PORT_AUTH} #Necessary for databasse access
+            - MONGO_PORT=${MONGO_PORT_AUTH} #Necessary for databasse access
+            - MONGO_URL=${AUTH_MONGO_CONTAINER_NAME} #Necessary for databasse access
+            - MONGO_USER=${MONGO_USER} #Necessary for databasse access
+            - MONGO_USER_PW=${MONGO_USER_PW} #Necessary for databasse access
+            - MONGO_DB_NAME=${MONGO_DB_NAME} #Necessary for databasse access
             - DOMAIN=${DOMAIN} #Necessary for CORS
-            - HTTP_PORT_FRONTEND=${HTTP_PORT_REACT} #Necessary for CORS
-            - JWT_SECRET=${JWT_SECRET}
+            - JWT_SECRET=${JWT_SECRET} #Secret to generate jwt
+            - MAIL_HOST=${MAIL_HOST} #Necessary for email authentication
+            - MAIL_PORT=${MAIL_PORT} #Necessary for email authentication
+            - MAIL_USER=${MAIL_USER} #Necessary for email authentication
+            - MAIL_PW=${MAIL_PW} #Necessary for email authentication
         depends_on:
             - mongodb_auth
