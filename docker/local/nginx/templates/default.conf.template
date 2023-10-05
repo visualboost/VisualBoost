@@ -1,25 +1,14 @@
 server {
-    #Ports
-    listen ${HTTP_PORT};
-    listen [::]:${HTTP_PORT};
+    #Listen to localhost on port ${HTTP_PORT}
+    listen ${REACT_APP_CONTAINER_NAME}:${HTTP_PORT};
 
-    #Domain
-    server_name ${DOMAIN};
-
-    #Run index.html of the build directory when ${DOMAIN}:${HTTP_PORT} is called
-    root /build;
-    index index.html;
-
+    #Run index.html of the build directory when localhost:${HTTP_PORT} is called
     location / {
+        root /build;
+        index index.html;
     }
 
     #Logs
     access_log  /logs/nginx/access.log;
     error_log   /logs/nginx/error.log;
-
-    #CORS
-    add_header 'Access-Control-Allow-Origin' "${DOMAIN}" always;
-    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE' always;
-    add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With' always;
-
 }
