@@ -1,4 +1,5 @@
 #!/bin/bash
+
 {
 while ! mongosh --host ${MONGO_URL} --port ${MONGO_PORT}
 do
