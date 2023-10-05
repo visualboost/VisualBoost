@@ -5,14 +5,14 @@ services:
         container_name: ${REACT_APP_CONTAINER_NAME}
         image: 'visualboost/react:latest'
         restart: always
-        tty: true
         expose:
-            - ${HTTP_PORT_REACT}
+            - ${HTTP_PORT_REACT} #Expose the application on this port
         ports:
-            - ${HTTP_PORT_REACT}:${HTTP_PORT_REACT}
+            - ${HTTP_PORT_REACT}:${HTTP_PORT_REACT} #Forward port
         environment:
-            - HTTP_PORT=${HTTP_PORT_REACT}
-            - DOMAIN=${DOMAIN}
-            - HTTP_PORT_MAIN=${HTTP_PORT_MAIN}
-            - HTTP_PORT_BUILD=${HTTP_PORT_BUILD}
-            - HTTP_PORT_AUTH=${HTTP_PORT_AUTH}
+            - REACT_APP_CONTAINER_NAME=${REACT_APP_CONTAINER_NAME} #Necessary for the nginx config
+            - HTTP_PORT=${HTTP_PORT_REACT} #Run the application on this port
+            - DOMAIN=${DOMAIN} #application domain
+            - SERVICE_PATH_MAIN=${PROXY_PATH_MAIN} #Path of the main service
+            - SERVICE_PATH_BUILD=${PROXY_PATH_BUILD} #Path of the build service
+            - SERVICE_PATH_AUTH=${PROXY_PATH_AUTH} #Path of the auth service
