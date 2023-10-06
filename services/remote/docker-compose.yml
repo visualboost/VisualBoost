@@ -1,0 +1,156 @@
+version: '3.9'
+
+include:
+    - ./../container/auth/database/db.yml
+    - ./../container/main/database/db.yml
+    - ./../container/build/database/db.yml
+
+services:
+    auth:
+        extends:
+            file: ./../container/auth/auth.yml
+            service: auth_app
+        #        env_file: .env
+        networks:
+            - visualboost
+        depends_on:
+            - mongodb_auth
+        volumes:
+            - ${LOG_DIR_AUTH}:/logs #Directory for log files
+        labels:
+            # Tell traefik to detect this service
+            - "traefik.enable=true"
+            # Listen on Port ${PROXY_PORT}
+            - "traefik.http.routers.auth.entrypoints=visualboost"
+            # Forward to react container when calling ${DOMAIN}
+            # Use PathPrefix insted of Path if you want to handle nested paths like /auth/login. If you use Path traefik would only handle /auth but not /auth/login.
+            - "traefik.http.routers.auth.rule=Host(`${DOMAIN}`) && PathPrefix(`${PROXY_PATH_AUTH}`)"
+            # Forward request to port ${HTTP_PORT_AUTH}
+            - "traefik.http.services.auth.loadbalancer.server.port=${HTTP_PORT_AUTH}"
+            # Add middlesware that removes the path ${PROXY_PATH_AUTH} from the request before it will be forwarded to the auth service
+            - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=${PROXY_PATH_AUTH}"
+            - "traefik.http.routers.auth.middlewares=strip-auth@docker"
+            # Add the certresolver to access this service via https
+            - "traefik.http.routers.auth.tls.certresolver=sslresolver"
+        environment:
+            - SSL_ENABLED=true
+            - PROXY_PORT=${PROXY_PORT} #Necessary for email link
+            - PROXY_PATH=${PROXY_PATH_AUTH} #Necessary for email link
+
+    main:
+        extends:
+            file: ./../container/main/main.yml
+            service: main_app
+        volumes:
+            - ${LOG_DIR_MAIN}:/logs #Directory for log files
+        labels:
+            # Tell traefik to detect this service
+            - "traefik.enable=true"
+            # Listen on Port ${PROXY_PORT}
+            - "traefik.http.routers.main.entrypoints=visualboost"
+            # Forward to react container when calling ${DOMAIN}
+            # Use PathPrefix insted of Path if you want to handle nested paths like /main/login. If you use Path traefik would only handle /main but not /main/login.
+            - "traefik.http.routers.main.rule=Host(`${DOMAIN}`) && PathPrefix(`${PROXY_PATH_MAIN}`)"
+            # Forward request to port ${HTTP_PORT_MAIN}
+            - "traefik.http.services.main.loadbalancer.server.port=${HTTP_PORT_MAIN}"
+            # Add middlesware that removes the path ${PROXY_PATH_AUTH} from the request before it will be forwarded to the auth service
+            - "traefik.http.middlewares.strip-main.stripprefix.prefixes=${PROXY_PATH_MAIN}"
+            - "traefik.http.routers.main.middlewares=strip-main@docker"
+            # Add the certresolver to access this service via https
+            - "traefik.http.routers.main.tls.certresolver=sslresolver"
+        networks:
+            - visualboost
+        depends_on:
+            - mongodb_main
+            - auth
+
+    build:
+        extends:
+            file: ./../container/build/build.yml
+            service: build_app
+        volumes:
+            - ${LOG_DIR_BUILD}:/logs #Directory for log files
+        environment:
+            - HTTP_PORT_MAIN=${HTTP_PORT_MAIN} #Necessary to access main service
+            #            - PROXY_PATH_MAIN=${PROXY_PATH_MAIN} #Necessary to access the main service
+            #Necessary to access main service - host.docker.internal will be localhost of docker host.
+            # Use ${DOMAIN} when running on remote server.
+            # Use host.docker.internal when running on localhost
+            - DOMAIN_MAIN=${MAIN_APP_CONTAINER_NAME}
+        #Necessary when running on localhost and linux system
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        labels:
+            # Tell traefik to detect this service
+            - "traefik.enable=true"
+            # Listen on Port ${PROXY_PORT}
+            - "traefik.http.routers.build.entrypoints=visualboost"
+            # Forward to react container when calling ${DOMAIN}
+            # Use PathPrefix insted of Path if you want to handle nested paths like /build/login. If you use Path traefik would only handle /build but not /build/login.
+            - "traefik.http.routers.build.rule=Host(`${DOMAIN}`) && PathPrefix(`${PROXY_PATH_BUILD}`)"
+            # Forward request to port ${HTTP_PORT_BUILD}
+            - "traefik.http.services.build.loadbalancer.server.port=${HTTP_PORT_BUILD}"
+            # Add middlesware that removes the path ${PROXY_PATH_AUTH} from the request before it will be forwarded to the auth service
+            - "traefik.http.middlewares.strip-build.stripprefix.prefixes=${PROXY_PATH_BUILD}"
+            - "traefik.http.middlewares.strip-build.stripprefix.forceSlash=false"
+            - "traefik.http.routers.build.middlewares=strip-build@docker"
+            # Add the certresolver to access this service via https
+            - "traefik.http.routers.build.tls.certresolver=sslresolver"
+        networks:
+            - visualboost
+        depends_on:
+            - mongodb_build
+            - main
+
+    react:
+        extends:
+            file: ./../container/react/react.yml
+            service: react_app
+        #        env_file: .env
+        volumes:
+            - ./nginx/templates:/etc/nginx/templates/
+            - ${LOG_DIR_NGINX}:/logs/nginx/ #Directory for log files
+        labels:
+            # Tell traefik to detect this service
+            - "traefik.enable=true"
+            # Listen on port ${PROXY_PORT}
+            - "traefik.http.routers.react.entrypoints=visualboost"
+            # Forward to react container when calling ${DOMAIN}
+            - "traefik.http.routers.react.rule=Host(`${DOMAIN}`)"
+            # Forward request to port ${HTTP_PORT_REACT}
+            - "traefik.http.services.react.loadbalancer.server.port=${HTTP_PORT_REACT}"
+            # Add the certresolver to access this service via https
+            - "traefik.http.routers.react.tls.certresolver=sslresolver"
+        networks:
+            - visualboost
+        environment:
+            - SSL_ENABLED=true
+        depends_on:
+            - build
+
+    reverse_proxy:
+        container_name: "visualboost_reverse_proxy"
+        image: traefik:v2.10
+        command:
+            - "--log.level=DEBUG"
+            - "--providers.docker"
+            - "--providers.docker.exposedByDefault=false"
+            - "--providers.docker.network=${NETWORK}"
+            - "--entrypoints.visualboost.address=:${PROXY_PORT}"
+            - "--certificatesresolvers.sslresolver.acme.tlschallenge=true"
+            - "--certificatesresolvers.sslresolver.acme.email=${LETS_ENCRYPT_MAIL}"
+            - "--certificatesresolvers.sslresolver.acme.storage=/letsencrypt/acme.json"
+        ports:
+            - "${PROXY_PORT}:${PROXY_PORT}"
+            - "8080:8080"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - ./letsencrypt:/letsencrypt
+        networks:
+            - visualboost
+        depends_on:
+            - react
+
+networks:
+    visualboost:
+        name: ${NETWORK}

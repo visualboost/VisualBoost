@@ -2,14 +2,14 @@ version: '3.9'
 
 # Include database configs
 include:
-    - ${DOCKER_SERVICE_PATH}/auth/database/db.yml
-    - ${DOCKER_SERVICE_PATH}/main/database/db.yml
-    - ${DOCKER_SERVICE_PATH}/build/database/db.yml
+    - ./../container/auth/database/db.yml
+    - ./../container/main/database/db.yml
+    - ./../container/build/database/db.yml
 
 services:
     auth:
         extends:
-            file: ${DOCKER_SERVICE_PATH}/auth/auth.yml
+            file: ./../container/auth/auth.yml
             service: auth_app
         networks:
             - visualboost
@@ -26,17 +26,15 @@ services:
             #Remove ${PROXY_PATH_AUTH} before accessing this service. The original service does only listen on localhost:${HTTP_PORT_AUTH}.
             - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=${PROXY_PATH_AUTH}"
             - "traefik.http.routers.auth.middlewares=strip-auth@docker"
-
-#            - "traefik.http.routers.auth.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         environment:
-            - SSL_ENABLED=${SSL_ENABLED} #if SSL_ENABLED=false the service uses http:// instead of https://
+            - SSL_ENABLED=false #if SSL_ENABLED=false the service uses http:// instead of https://
             - PROXY_PORT=${PROXY_PORT} #Necessary for email authentication
             - PROXY_PATH=${PROXY_PATH_AUTH} #Necessary for email authentication
             - DEBUG=false #Logs all requests
 
     main:
         extends:
-            file: ${DOCKER_SERVICE_PATH}/main/main.yml
+            file: ./../container/main/main.yml
             service: main_app
         volumes:
             - ${LOG_DIR_MAIN}:/logs #Directory for log files
@@ -49,8 +47,6 @@ services:
             #Remove ${PROXY_PATH_MAIN} before accessing this service. The original service does only listen on localhost:${HTTP_PORT_MAIN}.
             - "traefik.http.middlewares.strip-main.stripprefix.prefixes=${PROXY_PATH_MAIN}"
             - "traefik.http.routers.main.middlewares=strip-main@docker"
-
-#            - "traefik.http.routers.main.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
             - visualboost
         depends_on:
@@ -59,7 +55,7 @@ services:
 
     build:
         extends:
-            file: ${DOCKER_SERVICE_PATH}/build/build.yml
+            file: ./../container/build/build.yml
             service: build_app
         volumes:
             - ${LOG_DIR_BUILD}:/logs #Directory for log files
@@ -72,8 +68,6 @@ services:
             #Remove ${PROXY_PATH_BUILD} before accessing this service. The original service does only listen on localhost:${HTTP_PORT_BUILD}.
             - "traefik.http.middlewares.strip-build.stripprefix.prefixes=${PROXY_PATH_BUILD}"
             - "traefik.http.routers.build.middlewares=strip-build@docker"
-
-#            - "traefik.http.routers.build.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
             - visualboost
         depends_on:
@@ -82,7 +76,7 @@ services:
 
     react:
         extends:
-            file: ${DOCKER_SERVICE_PATH}/react/react.yml
+            file: ./../container/react/react.yml
             service: react_app
         volumes:
             - ./nginx/templates:/etc/nginx/templates/
@@ -92,12 +86,10 @@ services:
             - "traefik.http.routers.react.entrypoints=visualboost" #Listen on Port ${PROXY_PORT}
             - "traefik.http.routers.react.rule=Host(`${DOMAIN}`)"  # Forward to react container when calling ${DOMAIN}
             - "traefik.http.services.react.loadbalancer.server.port=${HTTP_PORT_REACT}" # Forward request to port ${HTTP_PORT_REACT}
-
-#            - "traefik.http.routers.react.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
             - visualboost
         environment:
-            - SSL_ENABLED=${SSL_ENABLED} #if SSL_ENABLED=false the service uses http:// instead of https://
+            - SSL_ENABLED=false #if SSL_ENABLED=false the service uses http:// instead of https://
         depends_on:
             - build
 
@@ -110,16 +102,11 @@ services:
                 - "--providers.docker.network=${NETWORK}" #set docker network
                 - "--entrypoints.visualboost.address=:${PROXY_PORT}" #traefik listen on port ${PROXY_PORT}
 
-#                - "--certificatesresolvers.sslresolver.acme.tlschallenge=true" #Necessary when running on a remote server with a letsencrypt certificate
-#                - "--certificatesresolvers.sslresolver.acme.email=${LETS_ENCRYPT_MAIL}" #Necessary when running on a remote server with a letsencrypt certificate
-#                - "--certificatesresolvers.sslresolver.acme.storage=/letsencrypt/acme.json" #Necessary when running on a remote server with a letsencrypt certificate
-
                 #- "--log.level=DEBUG" #Enable Logging
             ports:
                 - "${PROXY_PORT}:${PROXY_PORT}"
             volumes:
                 - /var/run/docker.sock:/var/run/docker.sock:ro
-                # - ./letsencrypt:/letsencrypt #Necessary when running on a remote server with a letsencrypt certificate
             networks:
                 - visualboost
             depends_on:
