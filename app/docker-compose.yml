@@ -119,7 +119,7 @@ services:
                 - "${PROXY_PORT}:${PROXY_PORT}"
             volumes:
                 - /var/run/docker.sock:/var/run/docker.sock:ro
-                # - ./letsencrypt:/letsencrypt #Necessary when running on a remote server with a letsencrypt certificate
+#                - ./letsencrypt:/letsencrypt #Necessary when running on a remote server with a letsencrypt certificate
             networks:
                 - visualboost
             depends_on:
