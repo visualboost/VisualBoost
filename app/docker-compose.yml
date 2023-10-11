@@ -131,6 +131,8 @@ services:
             - "traefik.http.middlewares.strip-watchtower.stripprefix.prefixes=${PROXY_PATH_WATCHTOWER}"
 
             - "traefik.http.routers.watchtower.middlewares=strip-watchtower@docker, add-header-watchtower@docker"
+
+#            - "traefik.http.routers.watchtower.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
             - visualboost
 
