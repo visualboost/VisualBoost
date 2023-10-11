@@ -27,6 +27,8 @@ services:
             - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=${PROXY_PATH_AUTH}"
             - "traefik.http.routers.auth.middlewares=strip-auth@docker"
 
+            - "com.centurylinklabs.watchtower.enable=true" # Watchtower will update this container if /v1/update is fetched
+
 #            - "traefik.http.routers.auth.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         environment:
             - SSL_ENABLED=${SSL_ENABLED} #if SSL_ENABLED=false the service uses http:// instead of https://
@@ -49,6 +51,8 @@ services:
             #Remove ${PROXY_PATH_MAIN} before accessing this service. The original service does only listen on localhost:${HTTP_PORT_MAIN}.
             - "traefik.http.middlewares.strip-main.stripprefix.prefixes=${PROXY_PATH_MAIN}"
             - "traefik.http.routers.main.middlewares=strip-main@docker"
+
+            - "com.centurylinklabs.watchtower.enable=true" # Watchtower will update this container if /v1/update is fetched
 
 #            - "traefik.http.routers.main.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
@@ -73,6 +77,8 @@ services:
             - "traefik.http.middlewares.strip-build.stripprefix.prefixes=${PROXY_PATH_BUILD}"
             - "traefik.http.routers.build.middlewares=strip-build@docker"
 
+            - "com.centurylinklabs.watchtower.enable=true" # Watchtower will update this container if /v1/update is fetched
+
 #            - "traefik.http.routers.build.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
             - visualboost
@@ -93,6 +99,8 @@ services:
             - "traefik.http.routers.react.rule=Host(`${DOMAIN}`)"  # Forward to react container when calling ${DOMAIN}
             - "traefik.http.services.react.loadbalancer.server.port=${HTTP_PORT_REACT}" # Forward request to port ${HTTP_PORT_REACT}
 
+            - "com.centurylinklabs.watchtower.enable=true" # Watchtower will update this container if /v1/update is fetched
+
 #            - "traefik.http.routers.react.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
             - visualboost
@@ -101,10 +109,37 @@ services:
         depends_on:
             - build
 
+    watchtower:
+        container_name: "visualboost_service_distribution"
+        image: containrrr/watchtower
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: --debug --http-api-update
+        environment:
+            - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_TOKEN}
+        labels:
+            - "com.centurylinklabs.watchtower.enable=false"
+
+            - "traefik.enable=true" #Detect this service
+            - "traefik.http.routers.watchtower.entrypoints=visualboost" #Listen on Port ${PROXY_PORT}
+            - "traefik.http.routers.watchtower.rule=Host(`${DOMAIN}`) && PathPrefix(`${PROXY_PATH_WATCHTOWER}`)" #Forward to this service when the domain with the path ${PROXY_PATH_BUILD} is called
+            - "traefik.http.services.watchtower.loadbalancer.server.port=8080" # Forward request to port 8080 - the watchtower api does only run on port 8080
+
+            # Add authorization header to request
+            - "traefik.http.middlewares.add-header-watchtower.headers.customrequestheaders.Authorization=Bearer ${WATCHTOWER_TOKEN}"
+            #Add replace path middleware
+            - "traefik.http.middlewares.strip-watchtower.stripprefix.prefixes=${PROXY_PATH_WATCHTOWER}"
+
+            - "traefik.http.routers.watchtower.middlewares=strip-watchtower@docker, add-header-watchtower@docker"
+        networks:
+            - visualboost
+
     reverse_proxy:
             container_name: "visualboost_reverse_proxy"
             image: traefik:v2.10
             command:
+                - "com.centurylinklabs.watchtower.enable=false" #Watchtower won't update the reverse proxy by fetching /v1/update
+
                 - "--providers.docker" #run traefik with docker
                 - "--providers.docker.exposedByDefault=false" #avoid that traefik auto detect the docker services
                 - "--providers.docker.network=${NETWORK}" #set docker network
@@ -114,7 +149,7 @@ services:
 #                - "--certificatesresolvers.sslresolver.acme.email=${LETS_ENCRYPT_MAIL}" #Necessary when running on a remote server with a letsencrypt certificate
 #                - "--certificatesresolvers.sslresolver.acme.storage=/letsencrypt/acme.json" #Necessary when running on a remote server with a letsencrypt certificate
 
-                #- "--log.level=DEBUG" #Enable Logging
+#                - "--log.level=DEBUG" #Enable Logging
             ports:
                 - "${PROXY_PORT}:${PROXY_PORT}"
             volumes:
@@ -124,6 +159,8 @@ services:
                 - visualboost
             depends_on:
                 - react
+                - watchtower
+
 
 networks:
    visualboost:

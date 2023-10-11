@@ -16,3 +16,4 @@ services:
             - SERVICE_PATH_MAIN=${PROXY_PATH_MAIN} #Path of the main service
             - SERVICE_PATH_BUILD=${PROXY_PATH_BUILD} #Path of the build service
             - SERVICE_PATH_AUTH=${PROXY_PATH_AUTH} #Path of the auth service
+            - SERVICE_PATH_WATCHTOWER=${PROXY_PATH_WATCHTOWER} #Path of the watchtower service
