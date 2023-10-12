@@ -125,12 +125,10 @@ services:
             - "traefik.http.routers.watchtower.rule=Host(`${DOMAIN}`) && PathPrefix(`${PROXY_PATH_WATCHTOWER}`)" #Forward to this service when the domain with the path ${PROXY_PATH_BUILD} is called
             - "traefik.http.services.watchtower.loadbalancer.server.port=8080" # Forward request to port 8080 - the watchtower api does only run on port 8080
 
-            # Add authorization header to request
-            - "traefik.http.middlewares.add-header-watchtower.headers.customrequestheaders.Authorization=Bearer ${WATCHTOWER_TOKEN}"
             #Add replace path middleware
             - "traefik.http.middlewares.strip-watchtower.stripprefix.prefixes=${PROXY_PATH_WATCHTOWER}"
 
-            - "traefik.http.routers.watchtower.middlewares=strip-watchtower@docker, add-header-watchtower@docker"
+            - "traefik.http.routers.watchtower.middlewares=strip-watchtower@docker"
 
 #            - "traefik.http.routers.watchtower.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
         networks:
