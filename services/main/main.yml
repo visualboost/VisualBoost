@@ -23,12 +23,12 @@ services:
             - HTTP_PORT=${HTTP_PORT_MAIN}
             - GIT_OPTIONS_BASE_PROJECT_REPOSITORY=${GIT_OPTIONS_BASE_PROJECT_REPOSITORY}
             - GIT_OPTIONS_BASE_PROJECT_BRANCH=${GIT_OPTIONS_BASE_PROJECT_BRANCH}
-            - BUILD_BACKEND_PORT=${HTTP_PORT_BUILD}
-            - DOMAIN=${DOMAIN}
-            - HTTP_PORT_FRONTEND=${HTTP_PORT_REACT}
+            - DOMAIN=${DOMAIN} #Necessary for cors
             - JWT_SECRET=${JWT_SECRET}
             - INTERNAL_KEY=${INTERNAL_KEY}
             - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+            - DOMAIN_BUILD=${BUILD_APP_CONTAINER_NAME} #The internal (docker) url of the build service - Used to access the build service
+            - HTTP_PORT_BUILD=${HTTP_PORT_BUILD} #Necessary to access the build service - We need to access the build service via port because 'localhost/build' that is provided by traefik is only available from outside docker.
         networks:
             - visual_boost_main_network
         depends_on:
