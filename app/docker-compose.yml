@@ -140,8 +140,6 @@ services:
             container_name: "visualboost_reverse_proxy"
             image: traefik:v2.10
             command:
-                - "com.centurylinklabs.watchtower.enable=false" #Watchtower won't update the reverse proxy by fetching /v1/update
-
                 - "--providers.docker" #run traefik with docker
                 - "--providers.docker.exposedByDefault=false" #avoid that traefik auto detect the docker services
                 - "--providers.docker.network=${NETWORK}" #set docker network
@@ -152,6 +150,8 @@ services:
 #                - "--certificatesresolvers.sslresolver.acme.storage=/letsencrypt/acme.json" #Necessary when running on a remote server with a letsencrypt certificate
 
 #                - "--log.level=DEBUG" #Enable Logging
+            labels:
+                - "com.centurylinklabs.watchtower.enable=false" #Avoid that watchtower updates traefik automatically
             ports:
                 - "${PROXY_PORT}:${PROXY_PORT}"
             volumes:
