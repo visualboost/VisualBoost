@@ -7,7 +7,7 @@ services:
     auth_app:
         container_name: ${AUTH_APP_CONTAINER_NAME}
         image: 'visualboost/auth:latest'
-        restart: 'unless-stopped'
+        restart: unless-stopped
         command: [ "npm", "run", "start" ]
         expose:
             - ${HTTP_PORT_AUTH} #Run application on this port

@@ -7,7 +7,7 @@ services:
     build_app:
         container_name: ${BUILD_APP_CONTAINER_NAME}
         image: 'visualboost/build:latest'
-        restart: always
+        restart: unless-stopped
         command: [ "npm", "run", "start" ]
         expose:
             - ${HTTP_PORT_BUILD} #Run application on this port

@@ -4,7 +4,7 @@ services:
     react_app:
         container_name: ${REACT_APP_CONTAINER_NAME}
         image: 'visualboost/react:latest'
-        restart: always
+        restart: unless-stopped
         expose:
             - ${HTTP_PORT_REACT} #Expose the application on this port
         ports:
