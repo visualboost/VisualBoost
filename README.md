@@ -5,7 +5,7 @@ Welcome to VisualBoost - A Software development tool.<br>
 <br>
 <br>
 <p align="center">
-  <img src="images/visualboost_intro.png" />
+  <img src="assets/visualboost_intro.png" />
 </p>
 <br>
 <br>
@@ -61,11 +61,6 @@ To run in background:
 
 ````shell
 docker-compose up -d
-````
-
-# How to update
-````shell
-docker-compose pull && docker-compose up -d
 ````
 
 # Configuration
@@ -138,11 +133,12 @@ docker-compose pull && docker-compose up -d
 | `HTTP_PORT_REACT`                          | `44444`                                   | HTTP port for the React service                        |
 
 ## Secrets Configuration
-| Parameter                                  | Default Value                             | Description                                           |
-|--------------------------------------------|-------------------------------------------|--------------------------------------------------------|
-| `JWT_SECRET`                               | -                          | Secret used for creating and verifying JWTs            |
-| `INTERNAL_KEY`                             | -                          | Key to access the private API                          |
-| `ENCRYPTION_KEY`                           | -                          | 32-bit key used for data encryption/decryption         |
+| Parameter                                  | Default Value                             | Description                                                                                                    |
+|--------------------------------------------|-------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| `JWT_SECRET`                               | -                          | Secret used for creating and verifying JWTs                                                                    |
+| `INTERNAL_KEY`                             | -                          | Key to access the private API                                                                                  |
+| `ENCRYPTION_KEY`                           | -                          | 32-bit key used for data encryption/decryption                                                                 |
+| `BASIC_AUTH_USERS`                           | -                          | Basic-Auth Credentials, e.g. `user1:encrypted_pw1,user2:encrypted_pw2.` Only necessary if you use basic auth. |
 
 ## E-Mail Credentials
 | Parameter                                  | Default Value                             | Description                                           |

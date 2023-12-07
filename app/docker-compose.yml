@@ -102,6 +102,10 @@ services:
             - "com.centurylinklabs.watchtower.enable=true" # Watchtower will update this container if /v1/update is fetched
 
 #            - "traefik.http.routers.react.tls.certresolver=sslresolver" #Necessary when running on a remote server with a letsencrypt certificate
+
+             # Enable to secure visualboost with basic auth. That means that a username and password must be entered before visualboost can be accessed.
+#            - "traefik.http.routers.react.middlewares=auth"
+#            - "traefik.http.middlewares.auth.basicauth.users=${BASIC_AUTH_USERS}"
         networks:
             - visualboost
         environment:
