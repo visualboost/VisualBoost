@@ -113,6 +113,26 @@ services:
         depends_on:
             - build
 
+    migration:
+        extends:
+            file: ${DOCKER_SERVICE_PATH}/migration/migration.yml
+            service: migration
+        env_file:
+            - .env
+        volumes:
+            - ${LOG_DIR_MIGRATION}:/migration/logs
+            - ${BACKUP_DIR_MIGRATION}:/migration/backup
+        labels:
+            - "traefik.enable=true" #Detect this service
+            - "com.centurylinklabs.watchtower.enable=true" # Watchtower will update this container if /v1/update is fetched
+        networks:
+            - visual_boost_auth_network
+            - visual_boost_main_network
+            - visual_boost_build_network
+            - visualboost
+        depends_on:
+            - reverse_proxy
+
     watchtower:
         container_name: "visualboost_service_distribution"
         image: containrrr/watchtower

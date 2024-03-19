@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+    migration:
+        container_name: visualboost_migration
+        image: 'visualboost/migration:latest'
+        restart: 'no'
+        expose:
+            - ${MONGO_PORT_AUTH}
+            - ${MONGO_PORT_MAIN}
+            - ${MONGO_PORT_BUILD}
+            - ${HTTP_PORT_AUTH}
+            - ${HTTP_PORT_MAIN}
+            - ${HTTP_PORT_BUILD}
+        volumes:
+            - ${LOG_DIR_MIGRATION}:/logs
+            - ${BACKUP_DIR_MIGRATION}:/backup
+        networks:
+            - visualboost
