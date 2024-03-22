@@ -29,6 +29,8 @@ services:
             - ENCRYPTION_KEY=${ENCRYPTION_KEY}
             - DOMAIN_BUILD=${BUILD_APP_CONTAINER_NAME} #The internal (docker) url of the build service - Used to access the build service
             - HTTP_PORT_BUILD=${HTTP_PORT_BUILD} #Necessary to access the build service - We need to access the build service via port because 'localhost/build' that is provided by traefik is only available from outside docker.
+            - DOMAIN_AUTH=${AUTH_APP_CONTAINER_NAME} # Necessary to access the auth service
+            - HTTP_PORT_AUTH=${HTTP_PORT_AUTH} # Necessary to access the auth service
         networks:
             - visual_boost_main_network
         depends_on:

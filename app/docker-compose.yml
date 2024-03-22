@@ -17,6 +17,7 @@ services:
             - mongodb_auth
         volumes:
             - ${LOG_DIR_AUTH}:/logs #Directory for log files
+            - ${PRIVACY_POLICY_DIR}:/public/policies #Copy your privacy policy (HTML file) into this directory to show a policy link on the sign up page
         labels:
             - "traefik.enable=true" #Detect this service
             - "traefik.http.routers.auth.entrypoints=visualboost" #Listen on Port ${PROXY_PORT}
