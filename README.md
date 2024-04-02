@@ -1,4 +1,4 @@
-# VisualBoost - Develop fast! Keep flexible!
+# [VisualBoost](https://visualboost.de) - Develop fast! Keep flexible!
 
 
 <br>
@@ -11,14 +11,17 @@ VisualBoost empowers you to design comprehensive software architectures and seam
 The resulting product is entirely yours to own. Furthermore, VisualBoost allows customization of the generated code, with any adjustments seamlessly integrated back into the overarching concept. 
 Accelerate your development process and amplify productivity with VisualBoost!
 
-### Prerequisites
+# Try it
 
-- Docker: ``v20.10.21 or higher``
-- Docker-Compose: ``v2.21.0 or higher``
+You can simply try VisualBoost on [app.visualboost.de](https://app.visualboost.de).
 
 # How to start
 
 ---
+
+### Prerequisites
+- Docker: ``v20.10.21 or higher``
+- Docker-Compose: ``v2.21.0 or higher``
 
 ### Step 1 - Access the repository
 
